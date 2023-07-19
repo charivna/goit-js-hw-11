@@ -29,10 +29,10 @@ orientation:"horizontal",
 safesearch:"true" 
             }
         }).then(resp => {
-            if (resp.length <= 0) {
+            if (resp.data.hits.length <= 0) {
             throw new Error ("Sorry, there are no images matching your search query. Please try again.")
             }
-            console.log(resp.data);
+            console.log(resp.data.hits);
 
         }).catch(err => console.log(err))
 }
