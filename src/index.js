@@ -1,5 +1,6 @@
 
 import axios from "axios";
+import Notiflix from 'notiflix';
 
 const refs = {
     formEl : document.querySelector('.search-form'),
@@ -34,7 +35,7 @@ safesearch:"true"
             }
             console.log(resp.data.hits);
 
-        }).catch(err => console.log(err))
+        }).catch(err => Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again."))
 }
 
 function createMarkup(response) {
