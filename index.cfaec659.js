@@ -1,2 +1,0 @@
-!function(){var e={formEl:document.querySelector(".search-form"),keyWordEl:document.querySelector("input")};function t(t){t.preventDefault();return fetch("".concat("https://pixabay.com/api/","?key=").concat("38322370-cd2680a408cbe7ab4bd12cfc4","&q=").concat(e.keyWordEl.value,"&image-type=photo&orientation=horizontal&safesearch=true")).then((function(e){return e.json()}))}e.formEl.addEventListener("submit",t),t(evt).then((function(e){return console.log(e)}))}();
-//# sourceMappingURL=index.cfaec659.js.map
