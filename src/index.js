@@ -38,6 +38,7 @@ async function onSubmit(evt) {
     try {
         const { hits, totalHits } = await fetchImages(page);  
         refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits));
+        Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`)
 
         if (page < Number(totalHits/40)) {
             refs.loadMoreEl.hidden = false;
@@ -76,7 +77,8 @@ return data}
         Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
     }
     
-   return hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="photo-card">
+     return hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => `
+   <div class="photo-card">
   <img src="${webformatURL}" alt="${tags}" loading="lazy" />
   <div class="info">
     <p class="info-item">
