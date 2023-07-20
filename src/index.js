@@ -4,41 +4,95 @@ import Notiflix from 'notiflix';
 
 const refs = {
     formEl : document.querySelector('.search-form'),
-    keyWordEl : document.querySelector('input')
+    keyWordEl: document.querySelector('input'),
+    galleryEl: document.querySelector('.gallery'),
+    loadMoreEl: document.querySelector('.load-more')
 }
 
-refs.formEl.addEventListener('submit', onSubmit)
+refs.formEl.addEventListener('submit', onSubmit);
+refs.loadMoreEl.addEventListener('click', onLoadMore)
 
-function onSubmit(evt) {
+let page = 1;
+
+async function onLoadMore() {
+   
+    page += 1;
+    const { hits, totalHits } = await fetchImages(page);
+    refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits))
+    
+    if (page >= Number(totalHits / 40)) {
+        
+        refs.loadMoreEl.hidden = true;
+
+         Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
+  }
+}
+
+async function onSubmit(evt) {
 
     evt.preventDefault()
-    fetchImages()
+   
+    refs.galleryEl.textContent = "";
+    refs.loadMoreEl.hidden = true;
 
+    try {
+        const { hits, totalHits } = await fetchImages(page);  
+        refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits));
+
+        if (page < Number(totalHits/40)) {
+            refs.loadMoreEl.hidden = false;
+        }
+    
+    } catch (error) {
+        console.log(error)
+    }
 }
 
-async function fetchImages() {
-const BASE_URL = "https://pixabay.com/api/"
+async function fetchImages(page = 1) {
+   
+    const BASE_URL = "https://pixabay.com/api/"
     const API_KEY = "38322370-cd2680a408cbe7ab4bd12cfc4"
     
-    const response = await axios.get(`${BASE_URL}`,
+    const { data } = await axios.get(`${BASE_URL}`,
         {
             params: {
-                key:`${API_KEY}`,
-                q:`${refs.keyWordEl.value}`,
-image_type: "photo",
-orientation:"horizontal",
-safesearch:"true" 
+                key: `${API_KEY}`,
+                q: `${refs.keyWordEl.value}`,
+                page: `${page}`,
+                per_page:"40",
+                image_type: "photo",
+                orientation: "horizontal",
+                safesearch: "true"
             }
-        }).then(resp => {
-            if (resp.data.hits.length <= 0) {
-            throw new Error ("Sorry, there are no images matching your search query. Please try again.")
-            }
-            console.log(resp.data.hits);
+              
+        })
+console.log(data);
+return data}
 
-        }).catch(err => Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again."))
-}
+ function createMarkup(hits) {
 
-function createMarkup(response) {
+    if (hits.length <= 0) {
+       
+        Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.")
+    }
     
+   return hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads }) => `<div class="photo-card">
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  <div class="info">
+    <p class="info-item">
+      <b>Likes ${likes}</b>
+    </p>
+    <p class="info-item">
+      <b>Views ${views}</b>
+    </p>
+    <p class="info-item">
+      <b>Comments ${comments}</b>
+    </p>
+    <p class="info-item">
+      <b>Downloads ${downloads}</b>
+    </p>
+  </div>
+</div>`).join('')
 }
 
+  
