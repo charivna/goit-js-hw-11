@@ -1,0 +1,14 @@
+.gallery{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.image{
+    width: 300px;
+    
+}
+
+.photo-card{
+    flex-basis: calc((100% - 72px)/4)
+}
+

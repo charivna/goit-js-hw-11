@@ -1,6 +1,9 @@
 
 import axios from "axios";
 import Notiflix from 'notiflix';
+import simpleLightbox from "simplelightbox";
+import SimpleLightbox from "simplelightbox";
+import "simplelightbox/dist/simple-lightbox.min.css";
 
 const refs = {
     formEl : document.querySelector('.search-form'),
@@ -34,10 +37,14 @@ async function onSubmit(evt) {
    
     refs.galleryEl.textContent = "";
     refs.loadMoreEl.hidden = true;
+   
 
     try {
         const { hits, totalHits } = await fetchImages(page);  
         refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits));
+        let lightbox = new SimpleLightbox('.gallery a', { captionsData: `alt`, captionDelay: 250, });
+          lightbox.refresh()
+     
 
         if (page < Number(totalHits/40)) {
             refs.loadMoreEl.hidden = false;
@@ -50,6 +57,7 @@ async function onSubmit(evt) {
         console.log(error)
     }
 }
+
 
 async function fetchImages(page = 1) {
    
@@ -82,7 +90,9 @@ return data}
     
      return hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => `
    <div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+   <a class="gallery__link" href="${largeImageURL}">
+  <img src="${webformatURL}" alt="${tags}" class ="image" loading="lazy" />
+   </a>
   <div class="info">
     <p class="info-item">
       <b>Likes ${likes}</b>
@@ -100,4 +110,3 @@ return data}
 </div>`).join('')
 }
 
-  
