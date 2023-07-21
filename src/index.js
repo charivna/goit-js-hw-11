@@ -77,7 +77,7 @@ async function fetchImages(page = 1) {
             }
               
         })
-console.log(data);
+
 return data}
 
  function createMarkup(hits) {
