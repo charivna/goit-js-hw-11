@@ -1,7 +1,6 @@
 
 import axios from "axios";
 import Notiflix from 'notiflix';
-import simpleLightbox from "simplelightbox";
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
@@ -12,6 +11,8 @@ const refs = {
     loadMoreEl: document.querySelector('.load-more')
 }
 
+let lightbox = new SimpleLightbox('.gallery a', { captionsData: `alt`, captionDelay: 250, });
+
 refs.formEl.addEventListener('submit', onSubmit);
 refs.loadMoreEl.addEventListener('click', onLoadMore)
 
@@ -21,11 +22,12 @@ async function onLoadMore() {
    
     page += 1;
     const { hits, totalHits } = await fetchImages(page);
-    refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits))
+  refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits));
+  lightbox.refresh()
     
     if (page >= Number(totalHits / 40)) {
         
-        refs.loadMoreEl.hidden = true;
+        refs.loadMoreEl.classList.add('hidden')
 
          Notiflix.Notify.failure("We're sorry, but you've reached the end of search results.")
   }
@@ -42,12 +44,11 @@ async function onSubmit(evt) {
     try {
         const { hits, totalHits } = await fetchImages(page);  
         refs.galleryEl.insertAdjacentHTML('beforeend', createMarkup(hits));
-        let lightbox = new SimpleLightbox('.gallery a', { captionsData: `alt`, captionDelay: 250, });
           lightbox.refresh()
      
 
         if (page < Number(totalHits/40)) {
-            refs.loadMoreEl.hidden = false;
+            refs.loadMoreEl.classList.remove('hidden')
                Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`)
         }
              
